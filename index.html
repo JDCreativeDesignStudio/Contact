@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Contact | JD Creative Design Studio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+html,body{margin:0;padding:0;background:#1c1511}
+*{box-sizing:border-box}
+.cf-wrapper{background:#1c1511;padding:32px;max-width:620px;margin:0 auto;font-family:'Montserrat',-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif}
+.cf-form{display:flex;flex-direction:column;gap:22px}
+.cf-row{display:flex;gap:20px}
+.cf-row .cf-field{flex:1;min-width:0}
+.cf-field{display:flex;flex-direction:column;gap:10px}
+.cf-field label{font-size:11px;letter-spacing:.08em;color:#fff;text-transform:uppercase;font-weight:500}
+.cf-required{color:#fff}
+.cf-field input,.cf-field select,.cf-field textarea{background:#2a221d;border:1px solid #4a3d34;border-radius:0;padding:14px 16px;color:#eef1ee;font-size:13px;font-family:inherit;outline:none;width:100%;transition:border-color .2s ease}
+.cf-field input::placeholder,.cf-field textarea::placeholder{color:#cdcbcb}
+.cf-field select{color:#cdcbcb;border-color:#c99e8a;appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23c99e8a' stroke-width='2'><line x1='5' y1='12' x2='19' y2='12'/><polyline points='12 5 19 12 12 19'/></svg>");background-repeat:no-repeat;background-position:right 16px center;background-size:16px;padding-right:45px}
+.cf-field select:valid{color:#eef1ee}
+.cf-field textarea{resize:vertical;min-height:110px}
+.cf-field input:focus,.cf-field select:focus,.cf-field textarea:focus{border-color:#c99e8a}
+.cf-submit{background:#c99e8a;color:#1c1511;border:0;border-radius:0;padding:18px 24px;font-size:12px;letter-spacing:.5px;font-weight:400;text-transform:uppercase;cursor:pointer;transition:background-color .2s ease,opacity .2s ease}
+.cf-submit:hover{background:#d6b1a0}
+.cf-submit:disabled{cursor:default;opacity:.85}
+.cf-form-message{display:none;font-size:12px;line-height:1.7;text-align:center;color:#fff}
+.cf-form-message.is-visible{display:block}
+.cf-form-message.is-error{color:#c99e8a}
+@media(max-width:480px){.cf-wrapper{padding:24px 20px}.cf-row{flex-direction:column;gap:22px}}
+</style>
+</head>
+<body>
+<div class="cf-wrapper">
+<form class="cf-form" id="contactForm">
+<div class="cf-field"><label for="cf-naam">NAAM</label><input type="text" id="cf-naam" name="fi-sender-firstName" placeholder="Je volledige naam"></div>
+<div class="cf-row">
+<div class="cf-field"><label for="cf-telefoon">TELEFOONNUMMER <span class="cf-required">*</span></label><input type="tel" id="cf-telefoon" name="fi-sender-phone" placeholder="Je telefoonnummer" required></div>
+<div class="cf-field"><label for="cf-email">E-MAIL <span class="cf-required">*</span></label><input type="email" id="cf-email" name="fi-sender-email" placeholder="Je e-mailadres" required></div>
+</div>
+<div class="cf-field"><label for="cf-dienst">WAARMEE KAN IK JOU VAN DIENST ZIJN? <span class="cf-required">*</span></label>
+<select id="cf-dienst" name="fi-select-dienst" required>
+<option value="" disabled selected>Kies een dienst →</option>
+<option value="Logo & Huisstijl ontwerp">Logo &amp; Huisstijl ontwerp</option>
+<option value="Logo Evaluatie & Advies">Logo Evaluatie &amp; Advies</option>
+<option value="Design Abonnement">Design Abonnement</option>
+</select></div>
+<div class="cf-field"><label for="cf-bericht">BERICHT OF VRAAG</label><textarea id="cf-bericht" name="fi-text-bericht" rows="5" placeholder="Stuur een bericht"></textarea></div>
+<button type="submit" class="cf-submit">GRATIS ADVIESGESPREK INPLANNEN</button>
+<div id="cf-message" class="cf-form-message" aria-live="polite"></div>
+</form>
+</div>
+<script src="https://forminit.com/sdk/v1/forminit.js"></script>
+<script>
+(function () {
+  const forminit = new Forminit();
+  const FORM_ID = 'odf9e8vezlf';
+
+  const form = document.getElementById('contactForm');
+  const button = form.querySelector('.cf-submit');
+  const message = document.getElementById('cf-message');
+  const originalButtonText = button.textContent.trim();
+
+  form.addEventListener('submit', async function (event) {
+    event.preventDefault();
+
+    message.textContent = '';
+    message.className = 'cf-form-message';
+    button.disabled = true;
+    button.textContent = 'EVEN VERSTUREN...';
+
+    try {
+      const { data, error } = await forminit.submit(
+        FORM_ID,
+        new FormData(form)
+      );
+
+      if (error) {
+        throw new Error(error.message || 'Verzenden mislukt');
+      }
+
+      form.reset();
+      button.textContent = 'AANVRAAG VERZONDEN ✓';
+      message.textContent =
+        'Bedankt! Je aanvraag is succesvol verzonden. Ik neem zo snel mogelijk contact met je op.';
+      message.className = 'cf-form-message is-visible';
+
+    } catch (error) {
+      console.error('Contactformulier:', error);
+
+      button.disabled = false;
+      button.textContent = originalButtonText;
+      message.textContent =
+        'Het versturen is niet gelukt. Probeer het nog een keer.';
+      message.className = 'cf-form-message is-visible is-error';
+    }
+  });
+})();
+</script>
+</body>
+</html>
